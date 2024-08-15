@@ -14,3 +14,6 @@ Commands:
   install: Install this script to /usr/local/bin/josh (may require sudo)
   help: Show this help message
 ```
+
+### Installation
+`curl https://raw.githubusercontent.com/JoshuaSchlichting/jo.sh/master/jo.sh --output jo.sh && chmod +x jo.sh && ./jo.sh install`
