@@ -41,8 +41,12 @@ if [ "$1" = "build" ]; then
 
 	if [ -f ~/.github_token.txt ]; then
 		GITHUB_TOKEN_SECRET="--secret id=github_token,src=~/.github_token.txt"
+		MOUNT_GITHUB_TOKEN_SECRET='RUN --mount=type=secret,id=github_token,uid=1000  git config --global url."https://\$(cat /run/secrets/github_token):@github.com/".insteadOf "https://github.com/"'
+		echo "Injecting GitHub token secret into build..."
 	else
 		GITHUB_TOKEN_SECRET=""
+		MOUNT_GITHUB_TOKEN_SECRET=""
+		echo "(No GitHub token found at ~/.github_token.txt)"
 	fi
 	if [ -n "${NEXUS_PYPI_URL}" ]; then
 		echo -e "export NEXUS_PYPI_URL=$NEXUS_PYPI_URL\nexport NEXUS_PYPI_USER=$NEXUS_PYPI_USER\nexport NEXUS_PYPI_PASSWORD='$NEXUS_PYPI_PASSWORD'" > /tmp/.env.nexus
@@ -68,6 +72,7 @@ if [ "$1" = "build" ]; then
 	ENV PATH="\$PATH:\$POETRY_HOME/bin"
 	RUN curl -SL https://install.python-poetry.org | python -
 	##############################################INSTALL POETRY##############################################
+	$MOUNT_GITHUB_TOKEN_SECRET
 
 	$PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS
 
