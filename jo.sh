@@ -104,6 +104,22 @@ elif [ "$1" = "uninstall" ]; then
 		rm $SYMLINK_PATH
 		echo "Uninstalled josh"
 	fi
+elif [ "$1" = "clean" ]; then
+	echo Attempting to clean up container and image...
+	docker container stop $CONTAINER_NAME || true
+	docker container rm $CONTAINER_NAME || true
+	docker image rm $CONTAINER_NAME || true
+	echo Clean up complete.
+elif [[ "$1" == *.sh ]]; then
+	docker run \
+		-it \
+		--rm \
+		--name $CONTAINER_NAME \
+		--volume $(pwd):/app \
+		--platform linux/amd64 \
+		-w /app \
+		-v $HOME/.aws:/root/.aws \
+		$CONTAINER_NAME "${@:1}"
 elif [[ "$1" == *.py ]]; then
 	docker run \
 		-it \
