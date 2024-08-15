@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+JOSH_VERSION=v0.0.3-alpha
 PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS=$(cat << "EOF"
 EOF
 )
@@ -37,7 +37,7 @@ ___  /  \____/_(_)____/ /_/ /_/
 /___/                           
 EOF
 
-echo "Josh's Own SHell v0.0.3-alpha"
+echo "Josh's Own SHell $JOSH_VERSION"
 echo "A tool for managing Python environments with Docker."
 echo "Image and container name (based on \$pwd): $CONTAINER_NAME"
 echo Docker image: $PYTHON_IMAGE
