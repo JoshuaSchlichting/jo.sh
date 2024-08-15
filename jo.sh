@@ -34,7 +34,7 @@ if [ "$1" = "build" ]; then
 				POETRY_FILES="COPY pyproject.toml poetry.lock ./"
 				;;
 			--no-cache)
-				NO_CACHE="--no-cache"
+				NO_CACHE="--no-cache-filter runtime"
 				;;
 		esac
 	done
@@ -60,10 +60,9 @@ if [ "$1" = "build" ]; then
 	echo "  - Environment variables: NEXUS_PYPI_URL, NEXUS_PYPI_USER, NEXUS_PYPI_PASSWORD"
 	
 	docker build -t $CONTAINER_NAME $GITHUB_TOKEN_SECRET $NEXUS_SECRET $NO_CACHE --platform linux/amd64 . -f-<<-EOF
-	FROM python:$PYTHON_IMAGE
+	FROM python:$PYTHON_IMAGE as builder
 	RUN apt-get update && apt-get install -y curl $ADDITIONAL_APT_PACKAGES
-	RUN --mount=type=secret,id=github_token,uid=1000  git config --global url."https://\$(cat /run/secrets/github_token):@github.com/".insteadOf "https://github.com/"
-	
+	RUN pip install --upgrade pip setuptools wheel
 	##############################################INSTALL POETRY##############################################
 	ENV POETRY_HOME="/opt/poetry" \
 		POETRY_VIRTUALENVS_CREATE=false \
@@ -72,11 +71,10 @@ if [ "$1" = "build" ]; then
 	ENV PATH="\$PATH:\$POETRY_HOME/bin"
 	RUN curl -SL https://install.python-poetry.org | python -
 	##############################################INSTALL POETRY##############################################
+	FROM builder AS runtime
 	$MOUNT_GITHUB_TOKEN_SECRET
 
 	$PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS
-
-	RUN pip install --upgrade pip setuptools wheel
 	$POETRY_FILES
 	$POETRY_INSTALL
 	ENTRYPOINT [ "bash" ]
