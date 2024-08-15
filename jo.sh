@@ -68,7 +68,7 @@ if [ "$1" = "build" ]; then
 	docker build -t $CONTAINER_NAME $GITHUB_TOKEN_SECRET $NEXUS_SECRET $NO_CACHE --platform linux/amd64 . -f-<<-EOF
 	FROM python:$PYTHON_IMAGE as builder
 	RUN apt-get update && apt-get install -y curl $ADDITIONAL_APT_PACKAGES
-	RUN pip install --upgrade pip setuptools wheel
+	RUN pip install --upgrade pip setuptools wheel mypy black
 	##############################################INSTALL POETRY##############################################
 	ENV POETRY_HOME="/opt/poetry" \
 		POETRY_VIRTUALENVS_CREATE=false \
