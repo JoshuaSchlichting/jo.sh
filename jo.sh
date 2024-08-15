@@ -11,6 +11,22 @@ PYTHON_IMAGE=3.10-slim-buster
 
 INSTALL_PATH=/usr/local/bin/jo.sh
 SYMLINK_PATH=/usr/local/bin/josh
+CONFIG_DOCKER_COMMANDS_FILE=~/.config/josh/docker_commands
+
+
+# if ~/.config/josh is not a directory, create it
+if [ ! -d ~/.config/josh ]; then
+	mkdir -p ~/.config/josh
+	touch $CONFIG_DOCKER_COMMANDS_FILE
+fi
+
+
+# read into PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS the contents of ~/.config/josh/docker_commands
+CONFIG_PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS=""
+if [ -f ~/.config/josh/docker_commands ]; then
+	CONFIG_PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS+="$(cat $CONFIG_DOCKER_COMMANDS_FILE)"
+fi
+
 
 cat << "EOF"
 ________                ______  
@@ -81,6 +97,8 @@ if [ "$1" = "build" ]; then
 	$MOUNT_GITHUB_TOKEN_SECRET
 
 	$PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS
+	$CONFIG_PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS
+
 	$POETRY_FILES
 	$POETRY_INSTALL
 	ENTRYPOINT [ "bash" ]
