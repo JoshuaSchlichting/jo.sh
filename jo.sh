@@ -137,7 +137,9 @@ elif [[ "$1" == *help ]]; then
 	echo "  build: Build the container"
 	echo "    --poetry-install: Install the dependencies in the pyproject.toml file into the image"
 	echo "    --no-cache: Do not use cache when building the image"
-	echo "  install: Install this script to /usr/local/bin/josh (may require sudo)"
+	echo "  clean: Stop and remove the container and image"
+	echo "  install: Install this script to /usr/local/bin/jo.sh and create a "josh" symlink (may require sudo)"
+	echo "  uninstall: Uninstall this script from /usr/local/bin/jo.sh (may require sudo)"
 	echo "  help: Show this help message"
 # if not empty, unrecognized 
 elif [ -n "$1" ]; then
