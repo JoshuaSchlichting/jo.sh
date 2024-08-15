@@ -91,6 +91,7 @@ elif [ "$1" = "install" ]; then
 		cp $0 $INSTALL_PATH
 		ln -sf $INSTALL_PATH $SYMLINK_PATH
 		chmod a+rx $INSTALL_PATH
+		echo "Installed josh to $INSTALL_PATH. You can call it with 'josh' or 'jo.sh'"
 	else
 		echo "Cannot install this script to $INSTALL_PATH because this is already $INSTALL_PATH"
 	fi
