@@ -8,6 +8,10 @@ ADDITIONAL_APT_PACKAGES="git g++ make"
 
 CONTAINER_NAME=$(basename "$(pwd)")
 PYTHON_IMAGE=3.10-slim-buster
+
+INSTALL_PATH=/usr/local/bin/jo.sh
+SYMLINK_PATH=/usr/local/bin/josh
+
 cat << "EOF"
 ________                ______  
 ______(_)_____   __________  /_ 
@@ -82,14 +86,22 @@ if [ "$1" = "build" ]; then
 	ENTRYPOINT [ "bash" ]
 	EOF
 elif [ "$1" = "install" ]; then
-	INSTALL_PATH=/usr/local/bin/jo.sh
-	INSTALL_PATH2=/usr/local/bin/josh
+
 	if [ "$0" != $INSTALL_PATH ]; then
 		cp $0 $INSTALL_PATH
-		ln -sf $INSTALL_PATH $INSTALL_PATH2
+		ln -sf $INSTALL_PATH $SYMLINK_PATH
 		chmod a+rx $INSTALL_PATH
 	else
 		echo "Cannot install this script to $INSTALL_PATH because this is already $INSTALL_PATH"
+	fi
+elif [ "$1" = "uninstall" ]; then
+	# are you sure prompt
+	read -p "Are you sure you want to uninstall josh? (y/n) " -n 1 -r
+	echo   # (optional) move to a new line
+	if [[ $REPLY =~ ^[Yy]$ ]]; then
+		rm $INSTALL_PATH
+		rm $SYMLINK_PATH
+		echo "Uninstalled josh"
 	fi
 elif [[ "$1" == *.py ]]; then
 	docker run \
