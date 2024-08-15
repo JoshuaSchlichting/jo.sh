@@ -51,11 +51,13 @@ if [ "$1" = "build" ]; then
 	if [ -n "${NEXUS_PYPI_URL}" ]; then
 		echo -e "export NEXUS_PYPI_URL=$NEXUS_PYPI_URL\nexport NEXUS_PYPI_USER=$NEXUS_PYPI_USER\nexport NEXUS_PYPI_PASSWORD='$NEXUS_PYPI_PASSWORD'" > /tmp/.env.nexus
 		NEXUS_SECRET="--secret id=nexus,src=/tmp/.env.nexus"
+		echo "Injecting Nexus PyPI secret into build..."
 	else
 		NEXUS_SECRET=""
+		echo "(No Nexus PyPI secret found)"
 	fi
 
-	echo "jo.sh is currently hard coded to to use the following secret values:"
+	echo "jo.sh is currently hard coded to to use the following secret values (if they exist!):"
 	echo "  - github_token: Used to authenticate with GitHub, located at ~/.github_token.txt"
 	echo "  - Environment variables: NEXUS_PYPI_URL, NEXUS_PYPI_USER, NEXUS_PYPI_PASSWORD"
 	
