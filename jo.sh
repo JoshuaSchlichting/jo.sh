@@ -11,7 +11,7 @@ PYTHON_IMAGE_VERSION=3.10-slim-buster
 
 INSTALL_PATH=/usr/local/bin/jo.sh
 SYMLINK_PATH=/usr/local/bin/josh
-CONFIG_DOCKER_COMMANDS_FILE=~/.config/josh/docker_commands
+CONFIG_DOCKER_COMMANDS_FILE=~/.config/josh/dockerfile_commands
 
 
 # if ~/.config/josh is not a directory, create it
@@ -23,7 +23,7 @@ fi
 
 # read into PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS the contents of ~/.config/josh/docker_commands
 CONFIG_PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS=""
-if [ -f ~/.config/josh/docker_commands ]; then
+if [ -f $CONFIG_DOCKER_COMMANDS_FILE ]; then
 	CONFIG_PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS+="$(cat $CONFIG_DOCKER_COMMANDS_FILE)"
 fi
 
