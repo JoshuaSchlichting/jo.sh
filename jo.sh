@@ -136,6 +136,7 @@ elif [ "$1" = "uninstall" ]; then
 		rm $SYMLINK_PATH
 		echo "Uninstalled josh"
 	fi
+	exit 0
 elif [ "$1" = "clean" ]; then
 	echo Attempting to clean up container and image...
 	docker container stop $CONTAINER_NAME || true
