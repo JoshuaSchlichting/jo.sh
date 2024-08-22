@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-JOSH_VERSION=v0.0.3-alpha
+JOSH_VERSION=v0.0.4-alpha
 PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS=$(cat << "EOF"
 EOF
 )
@@ -7,7 +7,7 @@ EOF
 ADDITIONAL_APT_PACKAGES="git g++ make"
 
 CONTAINER_NAME=$(basename "$(pwd)")
-PYTHON_IMAGE_VERSION=3.10-slim-buster
+PYTHON_IMAGE_VERSION=3.10
 
 INSTALL_PATH=/usr/local/bin/jo.sh
 SYMLINK_PATH=/usr/local/bin/josh
@@ -106,6 +106,7 @@ if [ "$1" = "build" ]; then
 		POETRY_NO_INTERACTION=1
 	ENV PATH="\$PATH:\$POETRY_HOME/bin"
 	RUN curl -SL https://install.python-poetry.org | python -
+ 	RUN poetry --version
 	##############################################INSTALL POETRY##############################################
 	FROM builder AS runtime
 	$MOUNT_GITHUB_TOKEN_SECRET
