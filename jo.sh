@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-JOSH_VERSION=v0.0.5
+JOSH_VERSION=v0.0.6
 PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS=$(cat << "EOF"
 EOF
 )
@@ -14,12 +14,13 @@ SYMLINK_PATH=/usr/local/bin/josh
 CONFIG_DOCKER_COMMANDS_FILE=~/.config/josh/dockerfile_commands
 
 
-# if ~/.config/josh is not a directory, create it
+# create ~/.config/josh configuration
 if [ ! -d ~/.config/josh ]; then
 	mkdir -p ~/.config/josh
+fi
+if [ ! -f $CONFIG_DOCKER_COMMANDS_FILE ]; then
 	touch $CONFIG_DOCKER_COMMANDS_FILE
 fi
-
 
 # read into PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS the contents of ~/.config/josh/docker_commands
 CONFIG_PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS=""
