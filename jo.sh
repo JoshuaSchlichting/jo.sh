@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-JOSH_VERSION=v0.0.4-alpha
+JOSH_VERSION=v0.0.5
 PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS=$(cat << "EOF"
 EOF
 )
@@ -56,6 +56,10 @@ if [ "$1" = "build" ]; then
                 ;;
             --no-cache)
                 NO_CACHE="--no-cache-filter runtime"
+                shift
+                ;;
+            --no-cache-all)
+                NO_CACHE="--no-cache"
                 shift
                 ;;
             --image)
@@ -170,7 +174,8 @@ elif [[ "$1" == *help ]]; then
 	echo "Commands:"
 	echo "  build: Build the container"
 	echo "    --poetry-install: Install the dependencies in the pyproject.toml file into the image"
-	echo "    --no-cache: Do not use cache when building the image"
+	echo "    --no-cache: Do not use cache for project contents when building the image (continues to cache 'essential' layers)"
+	echo "    --no-cache-all: Do not use cache at all when building the image"
 	echo "    --image [IMAGE]: Use a different Python image (default: $PYTHON_IMAGE_VERSION)"
 	echo "  clean: Stop and remove the container and image"
 	echo "  install: Install this script to /usr/local/bin/jo.sh and create a "josh" symlink (may require sudo)"
