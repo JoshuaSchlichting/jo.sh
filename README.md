@@ -11,6 +11,7 @@ Commands:
   build: Build the container
     --poetry-install: Install the dependencies in the pyproject.toml file into the image
     --no-cache: Do not use cache when building the image
+    --no-cache-all: Do not use cache at all when building the image
     --image [IMAGE]: Use a different Python image (default: 3.10-slim-buster)
   clean: Stop and remove the container and image
   install: Install this script to /usr/local/bin/jo.sh and create a josh symlink (may require sudo)
