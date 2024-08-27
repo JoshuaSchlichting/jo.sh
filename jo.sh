@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-JOSH_VERSION=0.0.8
+JOSH_VERSION=0.0.9
 PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS=$(cat << "EOF"
 EOF
 )
@@ -7,8 +7,27 @@ EOF
 ADDITIONAL_APT_PACKAGES="git g++ make"
 
 CONTAINER_NAME=$(basename "$(pwd)")
-PYTHON_IMAGE_VERSION=3.10
 
+read_toml_value() {
+    local file=$1
+    local key=$2
+    local value
+
+    # Use awk to extract the value
+    value=$(awk -F' = ' -v key="$key" '$1 == key {gsub(/"/, "", $2); print $2}' "$file")
+
+    # Remove any non-numeric characters except dots
+    value=$(echo "$value" | sed 's/[^0-9.]//g')
+
+    # Return the value
+    echo "$value"
+}
+PYPROJECT_PYTHON_VERSION=$(read_toml_value "pyproject.toml" "python")
+if [ -z "$PYPROJECT_PYTHON_VERSION" ]; then
+	PYTHON_IMAGE_VERSION=3.10
+else
+	PYTHON_IMAGE_VERSION=$PYPROJECT_PYTHON_VERSION
+fi
 INSTALL_PATH=/usr/local/bin/jo.sh
 SYMLINK_PATH=/usr/local/bin/josh
 CONFIG_DOCKER_COMMANDS_FILE=~/.config/josh/dockerfile_commands
