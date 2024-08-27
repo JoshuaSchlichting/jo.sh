@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-JOSH_VERSION=0.0.6
+JOSH_VERSION=0.0.7
 PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS=$(cat << "EOF"
 EOF
 )
@@ -112,6 +112,7 @@ if [ "$1" = "build" ]; then
 	ENV PATH="\$PATH:\$POETRY_HOME/bin"
 	RUN curl -SL https://install.python-poetry.org | python -
  	RUN poetry --version
+	RUN poetry config virtualenvs.create false
 	##############################################INSTALL POETRY##############################################
 	FROM builder AS runtime
 	$MOUNT_GITHUB_TOKEN_SECRET
