@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-JOSH_VERSION=0.0.7
+JOSH_VERSION=0.0.8
 PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS=$(cat << "EOF"
 EOF
 )
@@ -91,8 +91,16 @@ if [ "$1" = "build" ]; then
 		echo -e "export NEXUS_PYPI_URL=$NEXUS_PYPI_URL\nexport NEXUS_PYPI_USER=$NEXUS_PYPI_USER\nexport NEXUS_PYPI_PASSWORD='$NEXUS_PYPI_PASSWORD'" > /tmp/.env.nexus
 		NEXUS_SECRET="--secret id=nexus,src=/tmp/.env.nexus"
 		echo "Injecting Nexus PyPI secret into build..."
+		NEXUS_POETRY_CONFIG=""
+		NEXUS_POETRY_CONFIG=$(cat <<- "EOF"
+				RUN --mount=type=secret,id=nexus,uid=1000 . /run/secrets/nexus \
+					&& poetry config repositories.nexus $NEXUS_PYPI_URL \
+					&& poetry config http-basic.nexus $NEXUS_PYPI_USER $NEXUS_PYPI_PASSWORD
+			EOF
+		)
 	else
 		NEXUS_SECRET=""
+		NEXUS_POETRY_CONFIG=""
 		echo "(No Nexus PyPI secret found)"
 	fi
 
@@ -116,7 +124,7 @@ if [ "$1" = "build" ]; then
 	##############################################INSTALL POETRY##############################################
 	FROM builder AS runtime
 	$MOUNT_GITHUB_TOKEN_SECRET
-
+	$NEXUS_POETRY_CONFIG
 	$PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS
 	$CONFIG_PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS
 
