@@ -10,13 +10,15 @@ Usage: ./jo.sh [COMMAND] [OPTIONS]
 Commands:
   build: Build the container
     --poetry-install: Install the dependencies in the pyproject.toml file into the image
-    --no-cache: Do not use cached layers of user specific content (poetry packages, Dockerfile commands from ~/.config/josh/docker_commands)
+    --no-cache: Do not use cached layers of user specific content (poetry packages, Dockerfile commands from /Users/josh/.config/josh/dockerfile_commands)
     --no-cache-all: Do not use cache at all when building the image, this includes the base image and all layers
-    --image [IMAGE]: Use a different Python image (default: pyproject.toml's spec or 3.10)
+    --tagv [TAG VERSION]: Specify a Python docker image version (default: pyproject.toml's spec or 3.5). Example: --tagv 3.9
   clean: Stop and remove the container and image
   install: Install this script to /usr/local/bin/jo.sh and create a josh symlink (may require sudo)
   uninstall: Uninstall this script from /usr/local/bin/jo.sh (may require sudo)
   help: Show this help message
+Options:
+  --version, -v: Show the version of jo.sh
 ```
 
 ### Installation

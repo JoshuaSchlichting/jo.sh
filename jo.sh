@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
-JOSH_VERSION=0.0.10
+JOSH_VERSION=0.1.0
+if [[ "$1" = "--version" || "$1" = "-v" ]]; then
+	echo $JOSH_VERSION
+	exit 0
+fi
+
+
 PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS=$(cat << "EOF"
 EOF
 )
@@ -121,12 +127,12 @@ if [ "$1" = "build" ]; then
                 NO_CACHE="--no-cache"
                 shift
                 ;;
-            --image)
+            --tagv)
                 if [ -n "$2" ]; then
-                    PYTHON_IMAGE_VERSION=$2
+                    PYTHON_VERSION=$2
                     shift 2
                 else
-                    echo "Error: --image requires an argument"
+                    echo "Error: --tagv requires an argument"
                     exit 1
                 fi
                 ;;
@@ -243,11 +249,13 @@ elif [[ "$1" == *help ]]; then
 	echo "    --poetry-install: Install the dependencies in the pyproject.toml file into the image"
 	echo "    --no-cache: Do not use cached layers of user specific content (poetry packages, Dockerfile commands from $CONFIG_DOCKER_COMMANDS_FILE)"
 	echo "    --no-cache-all: Do not use cache at all when building the image, this includes the base image and all layers"
-	echo "    --image [IMAGE]: Use a different Python image (default: pyproject.toml's spec or $PYTHON_VERSION)"
+	echo "    --tagv [TAG VERSION]: Specify a Python docker image version (default: pyproject.toml's spec or $PYTHON_VERSION). Example: --tagv 3.9"
 	echo "  clean: Stop and remove the container and image"
 	echo "  install: Install this script to /usr/local/bin/jo.sh and create a "josh" symlink (may require sudo)"
 	echo "  uninstall: Uninstall this script from /usr/local/bin/jo.sh (may require sudo)"
 	echo "  help: Show this help message"
+	echo "Options:"
+	echo "  --version, -v: Show the version of jo.sh"
 # if not empty, unrecognized 
 elif [ -n "$1" ]; then
 	echo "Unrecognized command: $1"
