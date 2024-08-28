@@ -21,6 +21,7 @@ Commands:
 
 ### Installation
 `curl https://raw.githubusercontent.com/JoshuaSchlichting/jo.sh/master/jo.sh --output jo.sh && chmod +x jo.sh && ./jo.sh install`
+> Note: You may need to modify the above command to use `sudo` for the `jo.sh install` if you do not have permission to write to `/usr/local/bin`.
 
 
 ### Add custom `Dockerfile` commands
