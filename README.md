@@ -22,5 +22,11 @@ Commands:
 ### Installation
 `curl https://raw.githubusercontent.com/JoshuaSchlichting/jo.sh/master/jo.sh --output jo.sh && chmod +x jo.sh && ./jo.sh install`
 
+
 ### Add custom `Dockerfile` commands
 Add to `~/.config/josh/docker_commands` to add custom `Dockerfile` commands that will run immediately after Poetry is installed and any GitHub secret token is injected, while running *before* the `poetry install` command is issued, should you decided to run `jo.sh build --poetry-install`. This is useful for adding custom dependencies or setting up your environment in a specific way.
+
+### Poetry
+For now, `jo.sh` comes with Poetry as a default dependency. I'm considering only installing it automatically if a `pyproject.toml` file is present in the project directory. If you have any thoughts on this, I'd love to hear feedback.
+>#### *What is Poetry?*
+>Poetry is a tool for dependency management and packaging in Python. It allows you to declare the libraries your project depends on and it will manage (install/update) them for you. [Read more here.](https://python-poetry.org/docs/)
