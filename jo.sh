@@ -136,9 +136,9 @@ if [ "$1" = "build" ]; then
 		POETRY_VIRTUALENVS_IN_PROJECT=false \
 		POETRY_NO_INTERACTION=1
 	ENV PATH="\$PATH:\$POETRY_HOME/bin"
-	RUN curl -SL https://install.python-poetry.org | python -
- 	RUN poetry --version
-	RUN poetry config virtualenvs.create false
+	RUN curl -SL https://install.python-poetry.org | python - \
+		&& poetry --version \
+		&& poetry config virtualenvs.create false
 	##############################################INSTALL POETRY##############################################
 	FROM builder AS runtime
 	$MOUNT_GITHUB_TOKEN_SECRET
