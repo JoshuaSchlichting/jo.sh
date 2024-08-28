@@ -96,7 +96,6 @@ if [ "$1" = "build" ]; then
                 ;;
         esac
     done
-    echo done!!
 	if [ -f ~/.github_token.txt ]; then
 		GITHUB_TOKEN_SECRET="--secret id=github_token,src=~/.github_token.txt"
 		MOUNT_GITHUB_TOKEN_SECRET='RUN --mount=type=secret,id=github_token,uid=1000  git config --global url."https://\$(cat /run/secrets/github_token):@github.com/".insteadOf "https://github.com/"'
