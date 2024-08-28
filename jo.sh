@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-JOSH_VERSION=0.0.9
+JOSH_VERSION=0.0.10
 PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS=$(cat << "EOF"
 EOF
 )
@@ -7,6 +7,7 @@ EOF
 ADDITIONAL_APT_PACKAGES="git g++ make"
 
 CONTAINER_NAME=$(basename "$(pwd)")
+
 
 read_toml_value() {
     local file=$1
@@ -16,17 +17,55 @@ read_toml_value() {
     # Use awk to extract the value
     value=$(awk -F' = ' -v key="$key" '$1 == key {gsub(/"/, "", $2); print $2}' "$file")
 
-    # Remove any non-numeric characters except dots
-    value=$(echo "$value" | sed 's/[^0-9.]//g')
-
     # Return the value
     echo "$value"
 }
-PYPROJECT_PYTHON_VERSION=$(read_toml_value "pyproject.toml" "python")
-if [ -z "$PYPROJECT_PYTHON_VERSION" ]; then
-	PYTHON_IMAGE_VERSION=3.10
+
+read_toml_latest_py_version() {
+    local file=$1
+    local key=$2
+    local value
+
+    # Use awk to extract the value
+    value=$(read_toml_value "$file" "$key")
+
+    # Extract version numbers and their preceding characters
+    versions=$(echo "$value" | awk -F'[<>=,^]' '{for(i=1;i<=NF;i++) if($i ~ /^[0-9]+\.[0-9]+(\.[0-9]+)?$/) print $i}' | sort -V)
+
+    # Initialize variables
+    highest_version=""
+    lowest_version=""
+    use_lowest=false
+
+    # Iterate through versions to find the highest and lowest versions
+    for version in $versions; do
+        if [[ $value == *"<"$version ]]; then
+            use_lowest=true
+        elif [[ $value == *"="$version ]]; then
+            highest_version=$version
+        else
+            if [[ -z $lowest_version ]]; then
+                lowest_version=$version
+            fi
+            highest_version=$version
+        fi
+    done
+
+    # Determine the version to use
+    if $use_lowest; then
+        echo "$lowest_version"
+    else
+        echo "$highest_version"
+    fi
+}
+
+if [ -f pyproject.toml ]; then
+	PYPROJECT_PYTHON_VERSION=$(read_toml_latest_py_version "pyproject.toml" "python")
+	PYTHON_VERSION=$PYPROJECT_PYTHON_VERSION
+	echo "Using Python version $PYTHON_VERSION from pyproject.toml"
 else
-	PYTHON_IMAGE_VERSION=$PYPROJECT_PYTHON_VERSION
+	PYTHON_VERSION=3.10
+	echo "No pyproject.toml found, using default Python version $PYTHON_VERSION"
 fi
 INSTALL_PATH=/usr/local/bin/jo.sh
 SYMLINK_PATH=/usr/local/bin/josh
@@ -60,7 +99,7 @@ EOF
 echo "Josh's Own SHell $JOSH_VERSION"
 echo "A tool for managing Python environments with Docker."
 echo "Image and container name (based on \$pwd): $CONTAINER_NAME"
-echo Default Docker image: $PYTHON_IMAGE_VERSION
+echo Default Docker image: $PYTHON_VERSION
 echo "Use '$0 help' for more information"
 set -e
 if [ "$1" = "build" ]; then
@@ -125,9 +164,9 @@ if [ "$1" = "build" ]; then
 	echo "jo.sh is currently hard coded to to use the following secret values (if they exist!):"
 	echo "  - github_token: Used to authenticate with GitHub, located at ~/.github_token.txt"
 	echo "  - Environment variables: NEXUS_PYPI_URL, NEXUS_PYPI_USER, NEXUS_PYPI_PASSWORD"
-	echo Building with image python:$PYTHON_IMAGE_VERSION
+	echo Building with image python:$PYTHON_VERSION
 	docker build -t $CONTAINER_NAME $GITHUB_TOKEN_SECRET $NEXUS_SECRET $NO_CACHE --platform linux/amd64 . -f-<<-EOF
-	FROM python:$PYTHON_IMAGE_VERSION as builder
+	FROM python:$PYTHON_VERSION as builder
 	RUN apt-get update && apt-get install -y curl $ADDITIONAL_APT_PACKAGES
 	RUN pip install --upgrade pip setuptools wheel mypy black
 	##############################################INSTALL POETRY##############################################
@@ -204,7 +243,7 @@ elif [[ "$1" == *help ]]; then
 	echo "    --poetry-install: Install the dependencies in the pyproject.toml file into the image"
 	echo "    --no-cache: Do not use cached layers of user specific content (poetry packages, Dockerfile commands from $CONFIG_DOCKER_COMMANDS_FILE)"
 	echo "    --no-cache-all: Do not use cache at all when building the image, this includes the base image and all layers"
-	echo "    --image [IMAGE]: Use a different Python image (default: pyproject.toml's spec or $PYTHON_IMAGE_VERSION)"
+	echo "    --image [IMAGE]: Use a different Python image (default: pyproject.toml's spec or $PYTHON_VERSION)"
 	echo "  clean: Stop and remove the container and image"
 	echo "  install: Install this script to /usr/local/bin/jo.sh and create a "josh" symlink (may require sudo)"
 	echo "  uninstall: Uninstall this script from /usr/local/bin/jo.sh (may require sudo)"
@@ -214,7 +253,7 @@ elif [ -n "$1" ]; then
 	echo "Unrecognized command: $1"
 	echo "Use '$0 help' for more information"
 else
-	echo Launching a stateless interactive shell with Python and Poetry installed. Python version: $PYTHON_IMAGE_VERSION
+	echo Launching a stateless interactive shell with Python and Poetry installed. Python version: $PYTHON_VERSION
 	{
 	  docker run \
 		--rm \
