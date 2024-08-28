@@ -1,8 +1,8 @@
 
 # Josh's Own SHell
 ## A tool for managing Python environments with Docker.
-
-Use `jo.sh` in lieu of `virtualenv`, `venv,` `pyenv`, or any of the others; *Python itself is not required*. Simply build your image with `./jo.sh build` and run it with `./jo.sh`. This leaves you without any more [messy local Python installations on your machine](https://xkcd.com/1987/).
+`jo.sh` is a wrapper around Docker that allows you to easily build and run Python projects in a containerized environment.
+Use `jo.sh` in lieu of `virtualenv`, `venv,` `pyenv`, or any of the others; *Python itself is not required*. Simply build your image with `./jo.sh build` and run it with `./jo.sh`. 
 
 
 ```
