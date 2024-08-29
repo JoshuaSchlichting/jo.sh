@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-JOSH_VERSION=0.1.2
+JOSH_VERSION=0.1.3
 if [[ "$1" = "--version" || "$1" = "-v" ]]; then
 	echo $JOSH_VERSION
 	exit 0
@@ -73,9 +73,15 @@ CONFIG_DOCKER_COMMANDS_FILE=~/.config/josh/dockerfile_commands
 # create ~/.config/josh configuration
 if [ ! -d ~/.config/josh ]; then
 	mkdir -p ~/.config/josh
+	if [ "$(id -u)" -eq 0 ]; then
+		chown $SUDO_USER ~/.config/josh
+	fi
 fi
 if [ ! -f $CONFIG_DOCKER_COMMANDS_FILE ]; then
-	touch $CONFIG_DOCKER_COMMANDS_FILE
+    touch $CONFIG_DOCKER_COMMANDS_FILE
+    if [ "$(id -u)" -eq 0 ]; then
+        chown $SUDO_USER $CONFIG_DOCKER_COMMANDS_FILE
+    fi
 fi
 
 # read into PRE_POETRY_INSTALL_DOCKERFILE_COMMANDS the contents of ~/.config/josh/docker_commands
