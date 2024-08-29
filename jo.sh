@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-JOSH_VERSION=0.1.0
+JOSH_VERSION=0.1.1
 if [[ "$1" = "--version" || "$1" = "-v" ]]; then
 	echo $JOSH_VERSION
 	exit 0
@@ -187,12 +187,7 @@ elif [ "$1" = "build" ]; then
 		NEXUS_SECRET="--secret id=nexus,src=/tmp/.env.nexus"
 		echo "Injecting Nexus PyPI secret into build..."
 		NEXUS_POETRY_CONFIG=""
-		NEXUS_POETRY_CONFIG=$(cat <<- "EOF"
-				RUN --mount=type=secret,id=nexus,uid=1000 . /run/secrets/nexus \
-					&& poetry config repositories.nexus $NEXUS_PYPI_URL \
-					&& poetry config http-basic.nexus $NEXUS_PYPI_USER $NEXUS_PYPI_PASSWORD
-			EOF
-		)
+		NEXUS_POETRY_CONFIG="RUN --mount=type=secret,id=nexus,uid=1000 . /run/secrets/nexus && poetry config repositories.nexus $NEXUS_PYPI_URL && poetry config http-basic.nexus $NEXUS_PYPI_USER \"$NEXUS_PYPI_PASSWORD\""
 	else
 		NEXUS_SECRET=""
 		NEXUS_POETRY_CONFIG=""
