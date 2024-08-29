@@ -303,7 +303,11 @@ else
 		-v $HOME/.aws:/root/.aws \
 		$CONTAINER_NAME
 	} || {
+		{
 		echo Container already exists. Attaching to existing container..
 		docker exec -it $CONTAINER_NAME bash
+		} || {
+			echo "Error: Could not attach to existing container. Ensure you've built the image with \"$0 build\""
+		}
 	}
 fi
