@@ -204,7 +204,7 @@ elif [ "$1" = "build" ]; then
 	echo "  - Environment variables: NEXUS_PYPI_URL, NEXUS_PYPI_USER, NEXUS_PYPI_PASSWORD"
 	echo Building with image python:$PYTHON_VERSION
 	docker build -t $CONTAINER_NAME $GITHUB_TOKEN_SECRET $NEXUS_SECRET $NO_CACHE --platform linux/amd64 . -f-<<-EOF
-	FROM python:$PYTHON_VERSION as builder
+	FROM python:$PYTHON_VERSION AS builder
 	RUN apt-get update && apt-get install -y curl $ADDITIONAL_APT_PACKAGES
 	RUN pip install --upgrade pip setuptools wheel mypy black
 	##############################################INSTALL POETRY##############################################
