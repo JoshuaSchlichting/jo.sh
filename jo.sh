@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-JOSH_VERSION=0.1.1
+JOSH_VERSION=0.1.2
 if [[ "$1" = "--version" || "$1" = "-v" ]]; then
 	echo $JOSH_VERSION
 	exit 0
@@ -65,14 +65,6 @@ read_toml_latest_py_version() {
     fi
 }
 
-if [ -f pyproject.toml ]; then
-	PYPROJECT_PYTHON_VERSION=$(read_toml_latest_py_version "pyproject.toml" "python")
-	PYTHON_VERSION=$PYPROJECT_PYTHON_VERSION
-	echo "Using Python version $PYTHON_VERSION from pyproject.toml"
-else
-	PYTHON_VERSION=3.10
-	echo "No pyproject.toml found, using default Python version $PYTHON_VERSION"
-fi
 INSTALL_PATH=/usr/local/bin/jo.sh
 SYMLINK_PATH=/usr/local/bin/josh
 CONFIG_DOCKER_COMMANDS_FILE=~/.config/josh/dockerfile_commands
@@ -105,7 +97,14 @@ EOF
 echo "Josh's Own SHell $JOSH_VERSION"
 echo "A tool for managing Python environments with Docker."
 echo "Image and container name (based on \$pwd): $CONTAINER_NAME"
-echo Default Docker image: $PYTHON_VERSION
+if [ -f pyproject.toml ]; then
+	PYPROJECT_PYTHON_VERSION=$(read_toml_latest_py_version "pyproject.toml" "python")
+	PYTHON_VERSION=$PYPROJECT_PYTHON_VERSION
+	echo "Using Python version $PYTHON_VERSION from pyproject.toml"
+else
+	PYTHON_VERSION=3.12
+	echo "No pyproject.toml found, using default Python version $PYTHON_VERSION"
+fi
 echo "Use '$0 help' for more information"
 set -e
 if [ "$1" = "run" ]; then
