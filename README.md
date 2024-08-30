@@ -19,6 +19,7 @@ Commands:
   clean: Stop and remove the container and image
   install: Install this script to /usr/local/bin/jo.sh and create a josh symlink (may require sudo)
   uninstall: Uninstall this script from /usr/local/bin/jo.sh (may require sudo)
+  history: Show the history of the container image (alias for 'docker history --format {{.CreatedBy}} $(pwd) --no-trunc)'
   help: Show this help message
 Options:
   --version, -v: Show the version of jo.sh

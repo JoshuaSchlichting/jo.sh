@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-JOSH_VERSION=0.1.3
+JOSH_VERSION=0.1.4
 if [[ "$1" = "--version" || "$1" = "-v" ]]; then
 	echo $JOSH_VERSION
 	exit 0
@@ -253,6 +253,8 @@ elif [ "$1" = "clean" ]; then
 	docker container rm $CONTAINER_NAME || true
 	docker image rm $CONTAINER_NAME || true
 	echo Clean up complete.
+elif [ "$1" = "history" ]; then
+	docker history --format "{{.CreatedBy}}" $CONTAINER_NAME --no-trunc
 elif [[ "$1" == *.sh ]]; then
 	docker run \
 		-it \
@@ -288,6 +290,7 @@ elif [[ "$1" == *help ]]; then
 	echo "  clean: Stop and remove the container and image"
 	echo "  install: Install this script to /usr/local/bin/jo.sh and create a "josh" symlink (may require sudo)"
 	echo "  uninstall: Uninstall this script from /usr/local/bin/jo.sh (may require sudo)"
+	echo "  history: Show the history of the container image (alias for 'docker history --format "{{.CreatedBy}}" \$(pwd) --no-trunc)'"
 	echo "  help: Show this help message"
 	echo "Options:"
 	echo "  --version, -v: Show the version of jo.sh"
