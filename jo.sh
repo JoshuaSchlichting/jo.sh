@@ -106,7 +106,7 @@ echo "Image and container name (based on \$pwd): $CONTAINER_NAME"
 if [ -f pyproject.toml ]; then
 	PYPROJECT_PYTHON_VERSION=$(read_toml_latest_py_version "pyproject.toml" "python")
 	PYTHON_VERSION=$PYPROJECT_PYTHON_VERSION
-	echo "Using Python version $PYTHON_VERSION from pyproject.toml"
+	echo "(pyproject.toml suggests using $PYPROJECT_PYTHON_VERSION)"
 else
 	PYTHON_VERSION=3.12
 	echo "No pyproject.toml found, using default Python version $PYTHON_VERSION"
