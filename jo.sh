@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-JOSH_VERSION=0.1.4
+JOSH_VERSION=0.1.5
 if [[ "$1" = "--version" || "$1" = "-v" ]]; then
 	echo $JOSH_VERSION
 	exit 0
