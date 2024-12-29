@@ -10,6 +10,7 @@ Usage: ./jo.sh [COMMAND] [OPTIONS]
 Commands:
   run: Launch a stateless interactive shell with Python and Poetry installed
     --detach, -d: Run the container in the background
+    --port, -p [PORT]: Expose a port from the container to the host, multiple --port flags can be used
   stop: Stop the container if running
   build: Build the container
     --poetry-install: Install the dependencies in the pyproject.toml file into the image

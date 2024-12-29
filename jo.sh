@@ -114,34 +114,40 @@ fi
 echo "Use '$0 help' for more information"
 set -e
 if [ "$1" = "run" ]; then
-	DETACH_FLAG=""
-	while [ $# -gt 0 ]; do
-		case $1 in
-			--detach|-d)
-				DETACH_FLAG="-d"
-				DETACH_DETAILS="-c \"tail -f /dev/null\""
-				echo "Running in detached mode"
-				shift
-				;;
-			*)
-				shift
-				;;
-		esac
-	done
-	if [ -z "$DETACH_FLAG" ]; then
-		DETACH_FLAG="-it"
-	fi
-	docker run \
-		$DETACH_FLAG \
-		--entrypoint /bin/bash \
-		--rm \
-		--name $CONTAINER_NAME \
-		--volume $(pwd):/app \
-		--platform linux/amd64 \
-		-w /app \
-		-v $HOME/.aws:/root/.aws \
-		$CONTAINER_NAME $DETACH_DETAILS
-		
+    DETACH_FLAG=""
+    PORT_BINDINGS=""
+    while [ $# -gt 0 ]; do
+        case $1 in
+            --detach|-d)
+                DETACH_FLAG="-d"
+                DETACH_DETAILS="-c \"tail -f /dev/null\""
+                echo "Running in detached mode"
+                shift
+                ;;
+            --port|-p)
+                PORT_BINDINGS="$PORT_BINDINGS -p $2"
+                echo "Binding port $2"
+                shift 2
+                ;;
+            *)
+                shift
+                ;;
+        esac
+    done
+    if [ -z "$DETACH_FLAG" ]; then
+        DETACH_FLAG="-it"
+    fi
+    docker run \
+        $DETACH_FLAG \
+        --entrypoint /bin/bash \
+        --rm \
+        --name $CONTAINER_NAME \
+        --volume $(pwd):/app \
+        --platform linux/amd64 \
+        -w /app \
+        -v $HOME/.aws:/root/.aws \
+        $PORT_BINDINGS \
+        $CONTAINER_NAME $DETACH_DETAILS
 elif [ "$1" = "stop" ]; then
 	echo Stopping container \"$CONTAINER_NAME\"...
 	docker container stop $CONTAINER_NAME
@@ -281,6 +287,7 @@ elif [[ "$1" == *help ]]; then
 	echo "Commands:"
 	echo "  run: Launch a stateless interactive shell with Python and Poetry installed"
 	echo "    --detach, -d: Run the container in the background"
+	echo "    --port, -p [PORT]: Expose a port from the container to the host, multiple --port flags can be used"
 	echo "  stop: Stop the container if running"
 	echo "  build: Build the container"
 	echo "    --poetry-install: Install the dependencies in the pyproject.toml file into the image"
