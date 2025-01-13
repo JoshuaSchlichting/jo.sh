@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-JOSH_VERSION=0.1.5
+JOSH_VERSION=0.1.6
 if [[ "$1" = "--version" || "$1" = "-v" ]]; then
 	echo $JOSH_VERSION
 	exit 0
@@ -146,6 +146,7 @@ if [ "$1" = "run" ]; then
         --platform linux/amd64 \
         -w /app \
         -v $HOME/.aws:/root/.aws \
+		-v /var/run/docker.sock:/var/run/docker.sock \
         $PORT_BINDINGS \
         $CONTAINER_NAME $DETACH_DETAILS
 elif [ "$1" = "stop" ]; then
@@ -270,6 +271,7 @@ elif [[ "$1" == *.sh ]]; then
 		--platform linux/amd64 \
 		-w /app \
 		-v $HOME/.aws:/root/.aws \
+		-v /var/run/docker.sock:/var/run/docker.sock \
 		$CONTAINER_NAME "${@:1}"
 elif [[ "$1" == *.py ]]; then
 	docker run \
@@ -280,6 +282,7 @@ elif [[ "$1" == *.py ]]; then
 		--platform linux/amd64 \
 		-w /app \
 		-v $HOME/.aws:/root/.aws \
+		-v /var/run/docker.sock:/var/run/docker.sock \
 		--entrypoint python \
 		$CONTAINER_NAME "${@:1}"
 elif [[ "$1" == *help ]]; then
@@ -316,6 +319,7 @@ else
 		--platform linux/amd64 \
 		-w /app \
 		-v $HOME/.aws:/root/.aws \
+		-v /var/run/docker.sock:/var/run/docker.sock \
 		$CONTAINER_NAME
 	} || {
 		{
